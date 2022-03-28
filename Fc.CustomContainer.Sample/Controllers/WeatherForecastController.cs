@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fc.CustomContainer.Sample.Controllers
+namespace fc.customcontainer.sample.Controllers
 {
   [ApiController]
   [Route( "[controller]" )]

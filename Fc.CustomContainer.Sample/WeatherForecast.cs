@@ -1,6 +1,6 @@
 using System;
 
-namespace Fc.CustomContainer.Sample
+namespace fc.customcontainer.sample
 {
   public class WeatherForecast
   {
