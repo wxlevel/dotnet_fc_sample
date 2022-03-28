@@ -1,0 +1,28 @@
+## 指定运行是镜像
+#FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+#
+##切换到 /app 工作目录下
+#WORKDIR /app
+#
+## # 指定编译和发布镜像
+## FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+## # 设置工作目录为src
+## WORKDIR /
+#
+## 拷贝所有文件到容器中的工作目录
+#COPY ./dist/application/bin ./
+#
+#RUN dotnet restore "./Fc.CustomContainer.Sample.csproj" && dotnet build "./Fc.CustomContainer.Sample.csproj" -c Release -o /app/build && dotnet publish "./Fc.CustomContainer.Sample.csproj" -c Release -o /app/publish
+#
+#FROM base as final
+#WORKDIR /app
+#COPY --from=build /app/publish .
+#
+#ENTRYPOINT ["dotnet", "Fc.CustomContainer.Sample.dll"]
+
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+COPY dist /app
+WORKDIR /app
+EXPOSE 5000/tcp
+ENTRYPOINT ["dotnet", "Fc.CustomContainer.Sample.dll"]
