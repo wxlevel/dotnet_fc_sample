@@ -1,28 +1,22 @@
-## 指定运行是镜像
-#FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
-#
-##切换到 /app 工作目录下
-#WORKDIR /app
-#
-## # 指定编译和发布镜像
-## FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-## # 设置工作目录为src
-## WORKDIR /
-#
-## 拷贝所有文件到容器中的工作目录
-#COPY ./dist/application/bin ./
-#
-#RUN dotnet restore "./Fc.CustomContainer.Sample.csproj" && dotnet build "./Fc.CustomContainer.Sample.csproj" -c Release -o /app/build && dotnet publish "./Fc.CustomContainer.Sample.csproj" -c Release -o /app/publish
-#
-#FROM base as final
-#WORKDIR /app
-#COPY --from=build /app/publish .
-#
-#ENTRYPOINT ["dotnet", "Fc.CustomContainer.Sample.dll"]
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
-COPY dist /app
+FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
 WORKDIR /app
-EXPOSE 5000/tcp
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+WORKDIR /src
+COPY ["Fc.CustomContainer.Sample/Fc.CustomContainer.Sample.csproj", "Fc.CustomContainer.Sample/"]
+RUN dotnet restore "Fc.CustomContainer.Sample/Fc.CustomContainer.Sample.csproj"
+COPY . .
+WORKDIR "/src/Fc.CustomContainer.Sample"
+RUN dotnet build "Fc.CustomContainer.Sample.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Fc.CustomContainer.Sample.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Fc.CustomContainer.Sample.dll"]
